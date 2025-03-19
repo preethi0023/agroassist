@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Conversation with {{ other_user.username }} - Agro Assist{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('messages') }}">Messages</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ other_user.username }}</li>
+        </ol>
+    </nav>
+    
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <a href="{{ url_for('messages') }}" class="btn btn-sm btn-light me-3">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fa-2x me-2"></i>
+                <div>
+                    <h5 class="mb-0">{{ other_user.full_name or other_user.username }}</h5>
+                    <small>{{ other_user.user_type|capitalize }}</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body p-4" id="message-container" style="height: 60vh; overflow-y: auto;">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message-item mb-3 {% if message.sender_id == current_user.id %}text-end{% endif %}">
+                        <div class="message-content d-inline-block p-3 rounded-3 {% if message.sender_id == current_user.id %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 75%;">
+                            <p class="mb-0">{{ message.content }}</p>
+                        </div>
+                        <div class="message-time small text-muted mt-1">
+                            {{ message.timestamp.strftime('%b %d, %I:%M %p') }}
+                            {% if message.sender_id == current_user.id %}
+                                {% if message.read %}
+                                <i class="fas fa-check-double ms-1" title="Read"></i>
+                                {% else %}
+                                <i class="fas fa-check ms-1" title="Sent"></i>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center my-5 text-muted">
+                    <i class="fas fa-comments fa-3x mb-3"></i>
+                    <h5>No messages yet</h5>
+                    <p>Send a message to start the conversation</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="card-footer p-3">
+            <form method="POST" action="{{ url_for('conversation', user_id=other_user.id) }}" id="message-form">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="content" id="message-input" placeholder="Type your message..." required autofocus>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-secondary">
+                    <h5 class="mb-0">User Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ other_user.username }}</p>
+                    <p><strong>Type:</strong> {{ other_user.user_type|capitalize }}</p>
+                    {% if other_user.location %}
+                    <p><strong>Location:</strong> {{ other_user.location }}</p>
+                    {% endif %}
+                    <p><strong>Member since:</strong> {{ other_user.joined_date.strftime('%B %Y') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if other_user.user_type == 'expert' %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Expert Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if other_user.bio %}
+                    <p><strong>Bio:</strong> {{ other_user.bio }}</p>
+                    {% else %}
+                    <p><strong>Bio:</strong> <span class="text-muted">No bio information available.</span></p>
+                    {% endif %}
+                    <hr>
+                    <p class="mb-0"><strong>Ask about:</strong></p>
+                    <ul class="list-unstyled mt-2">
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Crop recommendations</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Disease identification</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Irrigation practices</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Soil management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to the bottom of the message container
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+    
+    // Auto-submit the form when the user presses Enter
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    
+    messageInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            if (messageInput.value.trim() !== '') {
+                messageForm.submit();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

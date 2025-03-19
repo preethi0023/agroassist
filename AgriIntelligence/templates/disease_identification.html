@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}Disease Identification - Agro Assist{% endblock %}
+
+{% block extra_css %}
+<style>
+    #image-preview {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        border-radius: 5px;
+        margin-top: 10px;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Plant Disease Identification</h1>
+    
+    <div class="row">
+        <div class="col-lg-5 order-lg-2">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Upload Plant Image</h5>
+                    <p class="card-text text-muted">
+                        Take a clear photo of the affected plant part and upload it for AI analysis.
+                    </p>
+                    
+                    <form method="POST" action="{{ url_for('disease_identification') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="plant_type" class="form-label">Plant Type</label>
+                            <select class="form-select" id="plant_type" name="plant_type" required>
+                                <option value="">-- Select Plant Type --</option>
+                                <option value="tomato">Tomato</option>
+                                <option value="potato">Potato</option>
+                                <option value="corn">Corn</option>
+                                <option value="rice">Rice</option>
+                                <option value="wheat">Wheat</option>
+                                <option value="apple">Apple</option>
+                                <option value="grape">Grape</option>
+                                <option value="cotton">Cotton</option>
+                                <option value="soybean">Soybean</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="plant_image" class="form-label">Plant Image</label>
+                            <input class="form-control" type="file" id="plant_image" name="plant_image" accept="image/png, image/jpeg, image/jpg" required>
+                            <div class="form-text">Upload a clear image of the affected area (leaves, stem, fruits)</div>
+                            <img id="image-preview" src="#" alt="Preview" class="mt-3 img-fluid">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger">Identify Disease</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Tips for Best Results</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Use good lighting (natural daylight is best)
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Focus closely on the affected area
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Include both healthy and diseased parts for comparison
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Avoid shadows or glare on the plant
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Take multiple photos from different angles if needed
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7 order-lg-1">
+            {% if disease %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Disease Analysis Results</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <img src="{{ url_for('uploaded_file', filename=image_name) }}" alt="Plant Image" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-7">
+                            <h4>{{ disease.diagnosis }}</h4>
+                            <p class="text-muted">Analyzed on {{ disease.timestamp.strftime('%B %d, %Y') }}</p>
+                            
+                            <div class="mb-3">
+                                <h6>Confidence Level:</h6>
+                                <div class="progress">
+                                    <div class="progress-bar bg-{{ 'success' if disease.confidence > 0.8 else 'warning' }}" 
+                                         role="progressbar" 
+                                         style="width: {{ disease.confidence * 100 }}%"
+                                         aria-valuenow="{{ disease.confidence * 100 }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        {{ (disease.confidence * 100)|round(1) }}%
+                                    </div>
+                                </div>
+                                <small class="text-muted">
+                                    {% if disease.confidence > 0.8 %}
+                                    High confidence in this diagnosis
+                                    {% else %}
+                                    Moderate confidence - consider additional verification
+                                    {% endif %}
+                                </small>
+                            </div>
+                            
+                            <h6>Plant Type:</h6>
+                            <p>{{ disease.plant_type.capitalize() }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="disease-details mt-4">
+                        <h5>About {{ disease.diagnosis }}</h5>
+                        
+                        {% if disease.diagnosis == "Early Blight" %}
+                        <p>Early blight is a fungal disease caused by <em>Alternaria solani</em>. It affects primarily tomatoes, potatoes, and other nightshade family plants.</p>
+                        <h6>Symptoms:</h6>
+                        <ul>
+                            <li>Dark, concentric rings forming a "bullseye" pattern on leaves</li>
+                            <li>Yellowing of leaf tissue around the spots</li>
+                            <li>Lesions begin on older, lower leaves and progress upward</li>
+                        </ul>
+                        <h6>Treatment:</h6>
+                        <ul>
+                            <li>Remove and destroy infected leaves</li>
+                            <li>Apply fungicides containing chlorothalonil or copper</li>
+                            <li>Ensure adequate spacing between plants for air circulation</li>
+                            <li>Avoid overhead watering</li>
+                        </ul>
+                        
+                        {% elif disease.diagnosis == "Late Blight" %}
+                        <p>Late blight is a devastating plant disease caused by the water mold <em>Phytophthora infestans</em>. It was responsible for the Irish Potato Famine.</p>
+                        <h6>Symptoms:</h6>
+                        <ul>
+                            <li>Pale to dark green water-soaked spots on leaves</li>
+                            <li>White, fuzzy growth on leaf undersides in humid conditions</li>
+                            <li>Dark brown lesions on stems</li>
+                            <li>Hard, dark spots on fruits/tubers</li>
+                        </ul>
+                        <h6>Treatment:</h6>
+                        <ul>
+                            <li>Remove and destroy infected plants immediately</li>
+                            <li>Apply fungicides containing mancozeb or chlorothalonil preventatively</li>
+                            <li>Plant resistant varieties</li>
+                            <li>Provide good air circulation</li>
+                        </ul>
+                        
+                        {% elif disease.diagnosis == "Leaf Mold" %}
+                        <p>Leaf mold is caused by the fungus <em>Passalora fulva</em> and primarily affects tomatoes, especially in greenhouse environments.</p>
+                        <h6>Symptoms:</h6>
+                        <ul>
+                            <li>Yellow patches on the upper side of leaves</li>
+                            <li>Olive-green to grayish-brown fungal growth on leaf undersides</li>
+                            <li>Affected leaves may curl, wither and drop</li>
+                        </ul>
+                        <h6>Treatment:</h6>
+                        <ul>
+                            <li>Improve air circulation</li>
+                            <li>Reduce humidity in greenhouses</li>
+                            <li>Remove and destroy infected leaves</li>
+                            <li>Apply fungicides containing chlorothalonil or copper</li>
+                        </ul>
+                        
+                        {% elif disease.diagnosis == "Healthy" %}
+                        <p>Good news! Your plant appears to be healthy. Here are some tips to maintain its health:</p>
+                        <ul>
+                            <li>Continue regular monitoring for early signs of disease</li>
+                            <li>Maintain proper watering schedules</li>
+                            <li>Ensure appropriate fertilization</li>
+                            <li>Practice crop rotation and good garden hygiene</li>
+                        </ul>
+                        
+                        {% else %}
+                        <p>This appears to be {{ disease.diagnosis }}. For specific treatment and management strategies, we recommend consulting with a local agricultural extension service or plant pathologist.</p>
+                        {% endif %}
+                        
+                        <div class="alert alert-warning mt-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i> This analysis is provided as a guide only. For severe cases or uncertainty, consult with an agricultural professional.
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('disease_identification') }}" class="btn btn-outline-primary">Analyze Another Plant</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <i class="fas fa-microscope fa-4x text-danger mb-3"></i>
+                    <h3>AI-Powered Disease Detection</h3>
+                    <p class="text-muted">Upload an image of your plant to identify diseases and get treatment recommendations.</p>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Common Plant Diseases</h5>
+                    
+                    <div class="accordion mt-3" id="diseaseAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Tomato Diseases
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#diseaseAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li><strong>Early Blight</strong> - Causes concentric ring patterns on leaves</li>
+                                        <li><strong>Late Blight</strong> - Water-soaked spots and white fuzzy growth</li>
+                                        <li><strong>Leaf Mold</strong> - Yellow spots on upper leaf surface, gray mold underneath</li>
+                                        <li><strong>Septoria Leaf Spot</strong> - Small dark spots with light centers</li>
+                                        <li><strong>Bacterial Spot</strong> - Small dark lesions on fruits and leaves</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Potato Diseases
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#diseaseAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li><strong>Late Blight</strong> - The notorious disease that caused the Irish potato famine</li>
+                                        <li><strong>Early Blight</strong> - Dark spots with concentric rings</li>
+                                        <li><strong>Black Leg</strong> - Dark stem base and yellowing leaves</li>
+                                        <li><strong>Common Scab</strong> - Rough, corky patches on tuber surface</li>
+                                        <li><strong>Blackheart</strong> - Internal discoloration from lack of oxygen</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Corn Diseases
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#diseaseAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li><strong>Gray Leaf Spot</strong> - Rectangular gray-brown lesions</li>
+                                        <li><strong>Northern Corn Leaf Blight</strong> - Large cigar-shaped gray-green lesions</li>
+                                        <li><strong>Common Rust</strong> - Small, reddish-brown pustules</li>
+                                        <li><strong>Southern Corn Leaf Blight</strong> - Tan lesions with dark borders</li>
+                                        <li><strong>Tar Spot</strong> - Small, raised black spots</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/image_preview.js') }}"></script>
+{% endblock %}

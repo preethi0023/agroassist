@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Agro Assist - Smart Agriculture Solutions{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <div class="row py-lg-5">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <h1 class="fw-bold text-success">Welcome to Agro Assist</h1>
+            <p class="lead text-muted">Your AI-powered agricultural assistant for better farming decisions</p>
+            {% if not current_user.is_authenticated %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center my-4">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg px-4">Sign In</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                        <h3 class="card-title h5">Crop Recommendations</h3>
+                        <p class="card-text">Get personalized crop recommendations based on your soil type, climate conditions, and other important factors.</p>
+                        <a href="{{ url_for('crop_recommendation') }}" class="btn btn-sm btn-outline-success mt-3">Try it now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-danger">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bug fa-3x text-danger mb-3"></i>
+                        <h3 class="card-title h5">Disease Identification</h3>
+                        <p class="card-text">Identify plant diseases by uploading photos, get diagnoses and treatment recommendations.</p>
+                        <a href="{{ url_for('disease_identification') }}" class="btn btn-sm btn-outline-danger mt-3">Try it now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-store fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title h5">Marketplace</h3>
+                        <p class="card-text">Buy and sell agricultural products directly with other farmers in your community.</p>
+                        <a href="{{ url_for('marketplace') }}" class="btn btn-sm btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="card h-100 border-info">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tint fa-3x text-info mb-3"></i>
+                        <h3 class="card-title h5">Irrigation Recommendations</h3>
+                        <p class="card-text">Get smart irrigation schedules and water management solutions tailored to your crops.</p>
+                        <a href="{{ url_for('irrigation') }}" class="btn btn-sm btn-outline-info mt-3">Learn more</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-comments fa-3x text-warning mb-3"></i>
+                        <h3 class="card-title h5">Expert Connections</h3>
+                        <p class="card-text">Connect with agricultural experts and other farmers to share knowledge and get advice.</p>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('messages') }}" class="btn btn-sm btn-outline-warning mt-3">Connect now</a>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-warning mt-3">Sign in to connect</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <div class="bg-dark p-3 rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bs-primary);">
+                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+                </div>
+                <h4 class="h5">Create Account</h4>
+                <p class="text-muted small">Sign up with your details to access all features</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-dark p-3 rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bs-success);">
+                    <i class="fas fa-upload fa-2x text-success"></i>
+                </div>
+                <h4 class="h5">Input Data</h4>
+                <p class="text-muted small">Enter your farm details or upload plant images</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-dark p-3 rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bs-info);">
+                    <i class="fas fa-robot fa-2x text-info"></i>
+                </div>
+                <h4 class="h5">AI Analysis</h4>
+                <p class="text-muted small">Our AI processes your data for accurate results</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="bg-dark p-3 rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bs-warning);">
+                    <i class="fas fa-clipboard-list fa-2x text-warning"></i>
+                </div>
+                <h4 class="h5">Get Results</h4>
+                <p class="text-muted small">Receive detailed recommendations and insights</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">What Farmers Say</h2>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-3x text-muted"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title mb-0">John Davis</h5>
+                                <div class="small text-muted">Wheat Farmer, Kansas</div>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            <i class="fas fa-quote-left fa-sm text-muted me-1"></i>
+                            The crop recommendation system helped me increase my yields by 20% this season. I was skeptical at first, but the results speak for themselves!
+                            <i class="fas fa-quote-right fa-sm text-muted ms-1"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-3x text-muted"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title mb-0">Maria Rodriguez</h5>
+                                <div class="small text-muted">Fruit Farmer, California</div>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            <i class="fas fa-quote-left fa-sm text-muted me-1"></i>
+                            The disease identification feature saved my tomato crop! I identified an early blight infection and treated it before it could spread.
+                            <i class="fas fa-quote-right fa-sm text-muted ms-1"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-3x text-muted"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title mb-0">Robert Smith</h5>
+                                <div class="small text-muted">Corn Farmer, Iowa</div>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            <i class="fas fa-quote-left fa-sm text-muted me-1"></i>
+                            The marketplace feature connected me with buyers I wouldn't have found otherwise. I've been able to sell my produce at better prices.
+                            <i class="fas fa-quote-right fa-sm text-muted ms-1"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-success text-white">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to revolutionize your farming?</h2>
+        <p class="lead mb-4">Join thousands of farmers who are already using Agro Assist to improve their yields and reduce costs.</p>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('crop_recommendation') }}" class="btn btn-light btn-lg px-4">Get Started with Recommendations</a>
+        {% else %}
+        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-4">Sign Up Now</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

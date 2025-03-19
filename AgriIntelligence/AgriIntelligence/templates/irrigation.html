@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+
+{% block title %}Irrigation Recommendations - Agro Assist{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Irrigation Recommendations</h1>
+    
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Get Irrigation Recommendations</h5>
+                    <p class="card-text text-muted">
+                        Enter your crop and field details to receive customized irrigation recommendations.
+                    </p>
+                    
+                    <form method="POST" action="{{ url_for('irrigation') }}">
+                        <div class="mb-3">
+                            <label for="crop_type" class="form-label">Crop Type</label>
+                            <select class="form-select" id="crop_type" name="crop_type" required>
+                                <option value="">-- Select Crop --</option>
+                                <option value="rice">Rice</option>
+                                <option value="wheat">Wheat</option>
+                                <option value="corn">Corn</option>
+                                <option value="potato">Potato</option>
+                                <option value="tomato">Tomato</option>
+                                <option value="lettuce">Lettuce</option>
+                                <option value="carrot">Carrot</option>
+                                <option value="onion">Onion</option>
+                                <option value="beans">Beans</option>
+                                <option value="peas">Peas</option>
+                                <option value="cotton">Cotton</option>
+                                <option value="sugarcane">Sugarcane</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="soil_type" class="form-label">Soil Type</label>
+                            <select class="form-select" id="soil_type" name="soil_type" required>
+                                <option value="">-- Select Soil Type --</option>
+                                <option value="clay">Clay</option>
+                                <option value="sandy">Sandy</option>
+                                <option value="loamy">Loamy</option>
+                                <option value="silty">Silty</option>
+                                <option value="peaty">Peaty</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="area_size" class="form-label">Field Size (square meters)</label>
+                            <input type="number" class="form-control" id="area_size" name="area_size" min="1" step="1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="climate" class="form-label">Climate Type</label>
+                            <select class="form-select" id="climate" name="climate" required>
+                                <option value="">-- Select Climate Type --</option>
+                                <option value="tropical">Tropical</option>
+                                <option value="subtropical">Subtropical</option>
+                                <option value="temperate">Temperate</option>
+                                <option value="arid">Arid</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="temperature" class="form-label">Average Temperature (°C)</label>
+                            <input type="number" class="form-control" id="temperature" name="temperature" min="-10" max="50" step="0.1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="humidity" class="form-label">Average Humidity (%)</label>
+                            <input type="number" class="form-control" id="humidity" name="humidity" min="0" max="100" step="1" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="rainfall" class="form-label">Weekly Rainfall (mm)</label>
+                            <input type="number" class="form-control" id="rainfall" name="rainfall" min="0" max="500" step="1" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-info text-white">Get Irrigation Plan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Irrigation Methods</h5>
+                    <div class="accordion mt-3" id="irrigationMethodsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="drip-heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#drip-collapse" aria-expanded="false" aria-controls="drip-collapse">
+                                    Drip Irrigation
+                                </button>
+                            </h2>
+                            <div id="drip-collapse" class="accordion-collapse collapse" aria-labelledby="drip-heading" data-bs-parent="#irrigationMethodsAccordion">
+                                <div class="accordion-body">
+                                    <p>Delivers water directly to the plant's root zone through a network of valves, pipes, tubing, and emitters.</p>
+                                    <p><strong>Best for:</strong> Row crops, orchards, vineyards, and vegetables.</p>
+                                    <p><strong>Efficiency:</strong> 90% water use efficiency.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="sprinkler-heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sprinkler-collapse" aria-expanded="false" aria-controls="sprinkler-collapse">
+                                    Sprinkler Irrigation
+                                </button>
+                            </h2>
+                            <div id="sprinkler-collapse" class="accordion-collapse collapse" aria-labelledby="sprinkler-heading" data-bs-parent="#irrigationMethodsAccordion">
+                                <div class="accordion-body">
+                                    <p>Simulates rainfall by spraying water into the air through pressurized nozzles.</p>
+                                    <p><strong>Best for:</strong> Large fields, lawns, and field crops.</p>
+                                    <p><strong>Efficiency:</strong> 75-85% water use efficiency.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="surface-heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#surface-collapse" aria-expanded="false" aria-controls="surface-collapse">
+                                    Surface Irrigation
+                                </button>
+                            </h2>
+                            <div id="surface-collapse" class="accordion-collapse collapse" aria-labelledby="surface-heading" data-bs-parent="#irrigationMethodsAccordion">
+                                <div class="accordion-body">
+                                    <p>Allows water to flow over the soil surface through gravity.</p>
+                                    <p><strong>Best for:</strong> Rice fields, flood-resistant crops.</p>
+                                    <p><strong>Efficiency:</strong> 40-70% water use efficiency.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7">
+            {% if irrigation %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Your Irrigation Recommendation</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6>Based on your input:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Crop:</strong> {{ irrigation.crop_type.capitalize() }}</li>
+                                    <li><strong>Soil Type:</strong> {{ irrigation.soil_type.capitalize() }}</li>
+                                    <li><strong>Climate:</strong> {{ irrigation.climate.capitalize() }}</li>
+                                    <li><strong>Field Size:</strong> {{ irrigation.area_size }} m²</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Temperature:</strong> {{ irrigation.temperature }}°C</li>
+                                    <li><strong>Humidity:</strong> {{ irrigation.humidity }}%</li>
+                                    <li><strong>Rainfall:</strong> {{ irrigation.rainfall }} mm</li>
+                                    <li><strong>Water Requirement:</strong> {{ irrigation.water_requirement|round(1) }} liters/week</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> {{ irrigation.recommendation }}
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3">Weekly Irrigation Schedule</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Water Amount (liters)</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day in schedule %}
+                                <tr>
+                                    <td>Day {{ day.day }}</td>
+                                    <td>{{ day.water_amount|round(1) }}</td>
+                                    <td>
+                                        {% if day.irrigate %}
+                                        <span class="badge bg-success">Irrigate</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Rest</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ day.note }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-info">
+                                    <th>Total</th>
+                                    <th>{{ irrigation.water_requirement|round(1) }} liters</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5>Recommended Irrigation Method</h5>
+                        {% if irrigation.soil_type == 'sandy' %}
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Drip Irrigation</h6>
+                                <p class="card-text">Sandy soil drains quickly, so drip irrigation is ideal to provide slow, consistent moisture directly to the root zone with minimal waste.</p>
+                            </div>
+                        </div>
+                        {% elif irrigation.soil_type == 'clay' %}
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Sprinkler Irrigation</h6>
+                                <p class="card-text">Clay soil retains water well but absorbs it slowly. Sprinklers with low precipitation rates are recommended to avoid runoff.</p>
+                            </div>
+                        </div>
+                        {% elif irrigation.crop_type == 'rice' %}
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Surface/Flood Irrigation</h6>
+                                <p class="card-text">Rice typically requires flood irrigation to maintain standing water in the field.</p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Drip or Sprinkler Irrigation</h6>
+                                <p class="card-text">Based on your soil and crop type, either drip or sprinkler irrigation would be effective. Drip is more water-efficient if available.</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-warning mt-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i> These recommendations are based on average conditions. Adjust irrigation based on visual inspection of soil moisture and plant health.
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{{ url_for('irrigation') }}" class="btn btn-outline-primary">Create Another Plan</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <i class="fas fa-tint fa-4x text-info mb-3"></i>
+                    <h3>Smart Irrigation Planning</h3>
+                    <p class="text-muted">Fill out the form to get customized irrigation recommendations for your crops.</p>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title">Benefits of Proper Irrigation</h5>
+                    
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-seedling text-success fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Increased Crop Yield</h6>
+                                    <p class="small text-muted">Proper irrigation can increase crop yields by 20-90% compared to rainfed agriculture.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-tint-slash text-danger fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Water Conservation</h6>
+                                    <p class="small text-muted">Smart irrigation scheduling can reduce water usage by up to 40% while maintaining crop health.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-coins text-warning fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Cost Savings</h6>
+                                    <p class="small text-muted">Optimized irrigation reduces water and energy costs while improving fertilizer efficiency.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-globe-americas text-primary fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Environmental Benefits</h6>
+                                    <p class="small text-muted">Efficient irrigation minimizes runoff, erosion, and groundwater contamination.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
